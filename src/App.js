@@ -242,7 +242,6 @@ function App() {
   })
   .sort((a, b) => {
    if (sortBy === 'dueDate') return new Date(a.dueDate || '9999') - new Date(b.dueDate || '9999');
-   if (sortBy === 'creationDate') return new Date(a.creationDate) - new Date(b.creationDate);
    if (sortBy === 'name') return a.title.localeCompare(b.title);
    return 0;
   });

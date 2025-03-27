@@ -1,8 +1,8 @@
 import React from 'react';
 
-function Modal({ children }) {
+function Modal({ children, className = '' }) {
   return (
-    <div className="modal">
+    <div className={`modal ${className}`}>
       <div className="modal-content">
         {children}
       </div>

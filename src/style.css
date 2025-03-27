@@ -169,28 +169,36 @@ ul {
 
 /* Modal de filtres */
 .filters-modal-content {
- width: 90%;
- max-width: 800px;
- max-height: 80vh;
+ width: 90%;  /* Utilise 90% de la largeur disponible */
+ max-width: 800px;  /* Limite la largeur maximale à 800px */
+ max-height: 80vh;  /* Limite la hauteur maximale à 80% de la hauteur de la fenêtre */
  overflow-y: auto;
- padding: 25px;
+ padding: 25px;  /* Ajoute un padding intérieur */
+}
+
+.filters-modal .modal-content {
+  width: 90%;  /* Utilise 90% de la largeur disponible */
+  max-width: 800px;  /* Limite la largeur maximale à 800px */
+  max-height: 80vh;  /* Limite la hauteur maximale à 80% de la hauteur de la fenêtre */
+  overflow-y: auto;
+  padding: 25px;  /* Ajoute un padding intérieur */
 }
 
 .filters-container {
  display: flex;
  flex-direction: row;
  flex-wrap: wrap;
- gap: 15px;
+ gap: 15px;  /* Espacement entre les sections */
  justify-content: space-between;
 }
 
 .filter-section {
- flex: 1 1 45%;
- min-width: 250px;
+ flex: 1 1 45%;  /* Chaque section occupe 45% de la largeur disponible */
+ min-width: 250px;  /* Largeur minimale pour éviter un écrasement */
  border: 1px solid #ddd;
  border-radius: 5px;
- padding: 15px;
- margin-bottom: 10px;
+ padding: 15px;  /* Ajoute un padding intérieur */
+ margin-bottom: 10px;  /* Espacement en bas */
 }
 
 .filter-section h3 {
@@ -201,20 +209,20 @@ ul {
 }
 
 .filter-options {
- max-height: 150px;
- overflow-y: auto;
+ max-height: 150px;  /* Limite la hauteur des options */
+ overflow-y: auto;  /* Ajoute un défilement vertical si nécessaire */
  padding-right: 5px;
 }
 
 .filter-option-item {
- margin: 8px 0;
+ margin: 8px 0;  /* Espacement vertical entre les options */
  display: flex;
  align-items: center;
 }
 
 .filter-option-item input[type="checkbox"],
 .filter-option-item input[type="radio"] {
- margin-right: 8px;
+ margin-right: 8px;  /* Espacement entre l'input et le label */
 }
 
 .filter-option-item label {
@@ -223,11 +231,31 @@ ul {
  font-weight: normal;
 }
 
+/* Actions des filtres */
+.filters-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: flex-end; /* Aligne les boutons à droite */
+  gap: 10px; /* Réduit l'espacement entre les boutons */
+  border-top: 1px solid #eee;
+  padding-top: 20px;
+  flex-wrap: nowrap; /* Empêche les boutons de passer à la ligne */
+}
+
+.filters-actions button {
+  min-width: 120px;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  margin: 0; /* Supprime les marges inutiles */
+}
+
 .filters-actions {
  margin-top: 20px;
  display: flex;
  justify-content: center;
- gap: 15px;
+ gap: 15px;  /* Espacement entre les boutons */
  border-top: 1px solid #eee;
  padding-top: 20px;
  flex-wrap: wrap;
@@ -261,33 +289,6 @@ ul {
  border: none;
 }
 
-.filters-actions {
- margin-top: 20px;
- display: flex;
- justify-content: center;
- gap: 15px;
- border-top: 1px solid #eee;
- padding-top: 20px;
-}
-
-.btn-apply {
- background-color: #4CAF50;
- color: white;
- border: none;
- padding: 10px 20px;
- border-radius: 4px;
- cursor: pointer;
-}
-
-.btn-cancel {
- background-color: #f44336;
- color: white;
- border: none;
- padding: 10px 20px;
- border-radius: 4px;
- cursor: pointer;
-}
-
 /* Styles pour la barre de recherche */
 .search-container {
  margin-bottom: 15px;
@@ -310,7 +311,14 @@ ul {
  background-color: #4CAF50;
  display: flex;
  align-items: center;
+ justify-content: center; /* Centre l'icône */
  gap: 5px;
+ color: white; /* Couleur de l'icône */
+ font-size: 1.2rem; /* Taille de l'icône */
+}
+
+.filter-button i {
+ font-size: 1.2rem; /* Ajuste la taille de l'icône */
 }
 
 .filter-indicator {

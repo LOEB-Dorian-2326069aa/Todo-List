@@ -19,7 +19,7 @@ function FilterModal({
   setShowModal
 }) {
   return (
-    <Modal>
+    <Modal className="filters-modal">
       <h2>Filtres et Tri</h2>
       
       <div className="filters-container">
@@ -176,16 +176,6 @@ function FilterModal({
                 onChange={() => setTempSortBy('dueDate')}
               />
               <label htmlFor="sort-combined-due-date">Date d'échéance</label>
-            </div>
-            <div className="filter-option-item">
-              <input 
-                type="radio" 
-                id="sort-combined-creation-date" 
-                name="sort"
-                checked={tempSortBy === 'creationDate'}
-                onChange={() => setTempSortBy('creationDate')}
-              />
-              <label htmlFor="sort-combined-creation-date">Date de création</label>
             </div>
             <div className="filter-option-item">
               <input 

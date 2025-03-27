@@ -43,7 +43,6 @@ function TaskForm({ isEditing = false, task, editTaskId, categories, addTask, sa
         urgent,
         category: category || 'Sans catégorie',
         state,
-        creationDate: new Date().toISOString(),
         dueDate,
       };
       addTask(newTask);
