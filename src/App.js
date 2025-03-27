@@ -16,13 +16,13 @@ function App() {
  const [showCategoryModal, setShowCategoryModal] = useState(false);
  const [editTaskId, setEditTaskId] = useState(null);
  const [showEditModal, setShowEditModal] = useState(false);
- const [viewMode, setViewMode] = useState('tasks'); // Default to tasks view
+ const [viewMode, setViewMode] = useState('tasks'); // Vue par défaut : tâches
  const [showFilterModal, setShowFilterModal] = useState(false);
  const [showImportModal, setShowImportModal] = useState(false);
  const [importError, setImportError] = useState('');
  const [searchQuery, setSearchQuery] = useState('');
  
- // Filter states
+ // États des filtres
  const [filters, setFilters] = useState({
   category: [],
   state: [],
@@ -31,14 +31,14 @@ function App() {
  });
  const [sortBy, setSortBy] = useState('dueDate');
  
- // Temp filter states for modals
+ // États temporaires pour les filtres dans les modals
  const [tempCategoryFilter, setTempCategoryFilter] = useState([]);
  const [tempStateFilter, setTempStateFilter] = useState([]);
  const [tempUrgencyFilter, setTempUrgencyFilter] = useState(null);
  const [tempDoneFilter, setTempDoneFilter] = useState(null);
  const [tempSortBy, setTempSortBy] = useState('dueDate');
 
- // Enum for task states
+ // Enumération des états des tâches
  const TASK_STATES = ['Nouveau', 'En cours', 'Réussi', 'En attente', 'Abandonné'];
  const COMPLETED_STATES = ['Réussi', 'Abandonné'];
 
@@ -48,7 +48,7 @@ function App() {
 
   if (storedTasks && storedCategories) {
    const parsedTasks = JSON.parse(storedTasks);
-   // Ensure all tasks have 'Nouveau' as default state if none is defined
+   // S'assurer que toutes les tâches ont 'Nouveau' comme état par défaut si aucun n'est défini
    const tasksWithDefaultState = parsedTasks.map(task => ({
     ...task,
     state: task.state || 'Nouveau'
@@ -56,7 +56,7 @@ function App() {
    setTasks(tasksWithDefaultState);
    setCategories(JSON.parse(storedCategories));
    
-   // Save the updated tasks with default states back to localStorage
+   // Sauvegarder les tâches mises à jour avec les états par défaut dans le localStorage
    if (JSON.stringify(parsedTasks) !== JSON.stringify(tasksWithDefaultState)) {
     localStorage.setItem('tasks', JSON.stringify(tasksWithDefaultState));
    }
@@ -134,7 +134,7 @@ function App() {
   saveToLocalStorage(updatedTasks, categories);
  };
 
- // Open combined filter modal
+ // Ouvrir le modal de filtres combinés
  const openFilterModal = () => {
    setTempCategoryFilter([...filters.category]);
    setTempStateFilter([...filters.state]);
@@ -144,7 +144,7 @@ function App() {
    setShowFilterModal(true);
  };
  
- // Reset filters
+ // Réinitialiser les filtres
  const resetAllFilters = () => {
    setTempCategoryFilter([]);
    setTempStateFilter([]);
@@ -153,7 +153,7 @@ function App() {
    setTempSortBy('dueDate');
  };
 
- // Apply filters
+ // Appliquer les filtres
  const applyAllFilters = () => {
    setFilters({
      category: tempCategoryFilter,
@@ -165,7 +165,7 @@ function App() {
    setShowFilterModal(false);
  };
 
- // Import/export functions
+ // Fonctions d'import/export
  const exportToJson = () => {
    const data = {
      tasks: tasks,
@@ -216,15 +216,15 @@ function App() {
    reader.readAsText(file);
  };
 
- // Filter tasks based on filters and search
+ // Filtrer les tâches en fonction des filtres et de la recherche
  const filteredTasks = tasks
   .filter(task => {
-   // Search filter
+   // Filtre de recherche
    if (searchQuery && !task.title.toLowerCase().includes(searchQuery.toLowerCase())) {
      return false;
    }
    
-   // Default view filter
+   // Filtre par vue par défaut
    if (viewMode === 'tasks' && 
        filters.category.length === 0 && 
        filters.state.length === 0 && 
@@ -233,7 +233,7 @@ function App() {
      return !COMPLETED_STATES.includes(task.state);
    }
    
-   // Apply other filters
+   // Appliquer les autres filtres
    if (filters.category.length && !filters.category.includes(task.category)) return false;
    if (filters.state.length && !filters.state.includes(task.state)) return false;
    if (filters.urgent !== null && task.urgent !== filters.urgent) return false;
@@ -247,7 +247,7 @@ function App() {
    return 0;
   });
 
- // Group tasks by category for category view
+ // Regrouper les tâches par catégorie pour la vue par catégorie
  const tasksByCategory = {};
  categories.forEach(category => {
    tasksByCategory[category.title] = filteredTasks.filter(
@@ -255,7 +255,7 @@ function App() {
    );
  });
  
- // Make sure "Sans catégorie" is included
+ // S'assurer que "Sans catégorie" est inclus
  tasksByCategory['Sans catégorie'] = filteredTasks.filter(task => 
    task.category === 'Sans catégorie' || !task.category
  );
