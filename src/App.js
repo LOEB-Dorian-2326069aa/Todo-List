@@ -216,7 +216,7 @@ function App() {
  const finalizeTask = (id) => {
   const updatedTasks = tasks.map(task => {
     if (task.id === id) {
-      if (!task.done) {
+      if (!task.done) { 
         // Si on finalise la tâche, on la marque comme "Réussi"
         return { 
           ...task, 
