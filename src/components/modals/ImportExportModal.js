@@ -37,6 +37,7 @@ function ImportExportModal({ importFromJson, importError, setShowModal }) {
   ]
 }`}
         </pre>
+        <p style={{ marginTop: '10px' }}>Le format avec "taches" au lieu de "tasks" est également accepté.</p>
       </div>
       
       <input 

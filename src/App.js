@@ -187,33 +187,47 @@ function App() {
  };
  
  const importFromJson = (event) => {
-   setImportError('');
-   const file = event.target.files[0];
-   if (!file) return;
-   
-   const reader = new FileReader();
-   reader.onload = (e) => {
-     try {
-       const importedData = JSON.parse(e.target.result);
-       
-       if (!importedData.tasks || !Array.isArray(importedData.tasks)) {
-         throw new Error('Le format du fichier est invalide. Il doit contenir un tableau "tasks".');
-       }
-       
-       if (!importedData.categories || !Array.isArray(importedData.categories)) {
-         throw new Error('Le format du fichier est invalide. Il doit contenir un tableau "categories".');
-       }
-       
-       setTasks(importedData.tasks);
-       setCategories(importedData.categories);
-       saveToLocalStorage(importedData.tasks, importedData.categories);
-       setShowImportModal(false);
-     } catch (error) {
-       console.error('Erreur lors de l\'importation:', error);
-       setImportError('Erreur lors de l\'importation: ' + error.message);
-     }
-   };
-   reader.readAsText(file);
+  setImportError('');
+  const file = event.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const importedData = JSON.parse(e.target.result);
+      
+      // Vérifier si le format est avec "tasks" ou avec "taches"
+      if (importedData.taches && Array.isArray(importedData.taches)) {
+        // Convertir le format "taches" en "tasks"
+        importedData.tasks = importedData.taches.map(task => ({
+          id: task.id,
+          title: task.title || task.nom,
+          description: task.description,
+          dueDate: task.date_echeance || task.dateEcheance,
+          done: task.done,
+          urgent: task.urgent,
+          state: task.etat || 'Nouveau',
+          category: task.categorie || 'Sans catégorie'
+        }));
+      } else if (!importedData.tasks || !Array.isArray(importedData.tasks)) {
+        throw new Error('Le format du fichier est invalide. Il doit contenir un tableau "tasks" ou "taches".');
+      }
+      
+      // Vérifier les catégories
+      if (!importedData.categories || !Array.isArray(importedData.categories)) {
+        throw new Error('Le format du fichier est invalide. Il doit contenir un tableau "categories".');
+      }
+      
+      setTasks(importedData.tasks);
+      setCategories(importedData.categories);
+      saveToLocalStorage(importedData.tasks, importedData.categories);
+      setShowImportModal(false);
+    } catch (error) {
+      console.error('Erreur lors de l\'importation:', error);
+      setImportError('Erreur lors de l\'importation: ' + error.message);
+    }
+  };
+  reader.readAsText(file);
  };
 
  // Filtrer les tâches en fonction des filtres et de la recherche
@@ -224,14 +238,7 @@ function App() {
      return false;
    }
    
-   // Filtre par vue par défaut
-   if (viewMode === 'tasks' && 
-       filters.category.length === 0 && 
-       filters.state.length === 0 && 
-       filters.urgent === null && 
-       filters.done === null) {
-     return !COMPLETED_STATES.includes(task.state);
-   }
+   // Suppression du filtrage par date d'échéance
    
    // Appliquer les autres filtres
    if (filters.category.length && !filters.category.includes(task.category)) return false;
