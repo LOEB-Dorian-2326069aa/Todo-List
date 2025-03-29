@@ -14,7 +14,7 @@ function FilterBar({ searchQuery, setSearchQuery, openFilterModal, hasActiveFilt
         onClick={openFilterModal}
         className="filter-button"
       >
-        <i className="fas fa-filter"></i> {/* Icône Font Awesome */}
+        <i className="fas fa-filter"></i>
         {hasActiveFilters && (
           <span className="filter-indicator">!</span>
         )}

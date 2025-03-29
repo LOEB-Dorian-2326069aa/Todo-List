@@ -115,7 +115,7 @@ function FilterModal({
             </div>
             <div className="filter-option-item">
               <input 
-                type="radio" 
+                type="radio"
                 id="urgency-combined-not-urgent" 
                 name="urgency"
                 checked={tempUrgencyFilter === false}
