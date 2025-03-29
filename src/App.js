@@ -16,7 +16,6 @@ function App() {
  const [showCategoryModal, setShowCategoryModal] = useState(false);
  const [editTaskId, setEditTaskId] = useState(null);
  const [showEditModal, setShowEditModal] = useState(false);
- const [viewMode, setViewMode] = useState('tasks'); // Vue par défaut : tâches
  const [showFilterModal, setShowFilterModal] = useState(false);
  const [showImportModal, setShowImportModal] = useState(false);
  const [importError, setImportError] = useState('');
@@ -45,23 +44,44 @@ function App() {
  useEffect(() => {
   const storedTasks = localStorage.getItem('tasks');
   const storedCategories = localStorage.getItem('categories');
+  const storedRelations = localStorage.getItem('relations'); // Ajout pour les relations
 
   if (storedTasks && storedCategories) {
-   const parsedTasks = JSON.parse(storedTasks);
-   // S'assurer que toutes les tâches ont 'Nouveau' comme état par défaut si aucun n'est défini
-   const tasksWithDefaultState = parsedTasks.map(task => ({
-    ...task,
-    state: task.state || 'Nouveau'
-   }));
-   setTasks(tasksWithDefaultState);
-   setCategories(JSON.parse(storedCategories));
-   
-   // Sauvegarder les tâches mises à jour avec les états par défaut dans le localStorage
-   if (JSON.stringify(parsedTasks) !== JSON.stringify(tasksWithDefaultState)) {
-    localStorage.setItem('tasks', JSON.stringify(tasksWithDefaultState));
-   }
+    const parsedTasks = JSON.parse(storedTasks);
+    const parsedCategories = JSON.parse(storedCategories);
+    const parsedRelations = storedRelations ? JSON.parse(storedRelations) : []; // Charger les relations
+
+    // Associer les tâches à leurs catégories via les relations
+    const tasksWithCategories = parsedTasks.map(task => {
+      const relation = parsedRelations.find(rel => rel.tache === task.id);
+      const category = relation ? parsedCategories.find(cat => cat.id === relation.categorie) : null;
+      return {
+        ...task,
+        category: category ? category.title : 'Sans catégorie'
+      };
+    });
+
+    setTasks(tasksWithCategories);
+    setCategories(parsedCategories);
+
+    // Sauvegarder les tâches mises à jour dans le localStorage
+    localStorage.setItem('tasks', JSON.stringify(tasksWithCategories));
   }
- }, []);
+}, []);
+
+useEffect(() => {
+  const storedRelations = localStorage.getItem('relations');
+  if (!storedRelations) {
+    const initialRelations = [
+      { tache: 102, categorie: 201 },
+      { tache: 108, categorie: 201 },
+      { tache: 109, categorie: 203 },
+      { tache: 105, categorie: 202 },
+      { tache: 106, categorie: 202 }
+    ];
+    localStorage.setItem('relations', JSON.stringify(initialRelations));
+  }
+}, []);
 
  const saveToLocalStorage = (tasks, categories) => {
   localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -91,7 +111,7 @@ function App() {
  const finalizeTask = (id) => {
   const updatedTasks = tasks.map(task => {
     if (task.id === id) {
-      if (!task.done) { 
+      if (!task.done) {
         return { 
           ...task, 
           done: true, 
@@ -102,7 +122,7 @@ function App() {
         return { 
           ...task, 
           done: false,
-          state: task.previousState || task.state
+          state: task.previousState || task.state 
         };
       }
     }
@@ -119,7 +139,7 @@ function App() {
 
  const saveEditedTask = (editedTask) => {
   const updatedTasks = tasks.map(task => 
-   task.id === editedTask.id ? editedTask : task
+   task.id === editedTask.id ? editedTask : task 
   );
   setTasks(updatedTasks);
   saveToLocalStorage(updatedTasks, categories);
@@ -128,7 +148,7 @@ function App() {
 
  const changeTaskState = (id, newState) => {
   const updatedTasks = tasks.map(task =>
-   task.id === id ? { ...task, state: newState } : task
+   task.id === id ? { ...task, state: newState } : task 
   );
   setTasks(updatedTasks);
   saveToLocalStorage(updatedTasks, categories);
@@ -143,7 +163,7 @@ function App() {
    setTempSortBy(sortBy);
    setShowFilterModal(true);
  };
- 
+
  // Réinitialiser les filtres
  const resetAllFilters = () => {
    setTempCategoryFilter([]);
@@ -171,26 +191,23 @@ function App() {
      tasks: tasks,
      categories: categories
    };
-   
    const jsonString = JSON.stringify(data, null, 2);
    const blob = new Blob([jsonString], { type: 'application/json' });
    const href = URL.createObjectURL(blob);
-   
    const link = document.createElement('a');
    link.href = href;
    link.download = `todo-app-export-${new Date().toISOString().slice(0, 10)}.json`;
    document.body.appendChild(link);
    link.click();
-   
    document.body.removeChild(link);
    URL.revokeObjectURL(href);
  };
- 
+
  const importFromJson = (event) => {
   setImportError('');
   const file = event.target.files[0];
   if (!file) return;
-  
+
   const reader = new FileReader();
   reader.onload = (e) => {
     try {
@@ -212,7 +229,7 @@ function App() {
       } else if (!importedData.tasks || !Array.isArray(importedData.tasks)) {
         throw new Error('Le format du fichier est invalide. Il doit contenir un tableau "tasks" ou "taches".');
       }
-      
+
       // Vérifier les catégories
       if (!importedData.categories || !Array.isArray(importedData.categories)) {
         throw new Error('Le format du fichier est invalide. Il doit contenir un tableau "categories".');
@@ -234,11 +251,12 @@ function App() {
  const filteredTasks = tasks
   .filter(task => {
    // Filtre de recherche
+   if (searchQuery.length > 0 && searchQuery.length < 3) {
+     return false; // Ignore search queries with less than 3 characters
+   }
    if (searchQuery && !task.title.toLowerCase().includes(searchQuery.toLowerCase())) {
      return false;
    }
-   
-   // Suppression du filtrage par date d'échéance
    
    // Appliquer les autres filtres
    if (filters.category.length && !filters.category.includes(task.category)) return false;
@@ -247,30 +265,16 @@ function App() {
    if (filters.done !== null && task.done !== filters.done) return false;
    return true;
   })
-  .sort((a, b) => {
-   if (sortBy === 'dueDate') return new Date(a.dueDate || '9999') - new Date(b.dueDate || '9999');
-   if (sortBy === 'name') return a.title.localeCompare(b.title);
-   return 0;
-  });
-
- // Regrouper les tâches par catégorie pour la vue par catégorie
- const tasksByCategory = {};
- categories.forEach(category => {
-   tasksByCategory[category.title] = filteredTasks.filter(
-     task => task.category === category.title
-   );
- });
+  .sort((a, b) => new Date(a.dueDate || '9999') - new Date(b.dueDate || '9999')); // Tri par date d'échéance
  
- // S'assurer que "Sans catégorie" est inclus
- tasksByCategory['Sans catégorie'] = filteredTasks.filter(task => 
-   task.category === 'Sans catégorie' || !task.category
- );
-
  return (
   <div>
     <Header 
       tasks={tasks} 
       taskStates={TASK_STATES} 
+      setSearchQuery={setSearchQuery} 
+      openFilterModal={openFilterModal} 
+      hasActiveFilters={filters.category.length > 0 || filters.state.length > 0 || filters.urgent !== null || filters.done !== null} 
     />
 
     <main>
@@ -285,8 +289,6 @@ function App() {
       
       <TaskList 
         tasks={filteredTasks}
-        tasksByCategory={tasksByCategory}
-        viewMode={viewMode}
         deleteTask={deleteTask}
         finalizeTask={finalizeTask}
         editTask={editTask}
@@ -296,8 +298,6 @@ function App() {
     <Footer 
       setShowTaskModal={setShowTaskModal} 
       setShowCategoryModal={setShowCategoryModal}
-      viewMode={viewMode}
-      setViewMode={setViewMode}
       exportToJson={exportToJson}
       setShowImportModal={setShowImportModal}
     />

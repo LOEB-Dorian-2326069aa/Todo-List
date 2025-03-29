@@ -16,6 +16,10 @@ function CategoryForm({ addCategory, setShowModal }) {
     { name: 'pink', hex: '#ff64dc' },
   ];
 
+  const sortTasksByDueDate = (tasks) => {
+    return tasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+  };
+
   const handleSubmit = () => {
     if (!title || title.length < 3) return;
     const newCategory = {
