@@ -34,9 +34,7 @@ function TaskManager() {
     setTempSortBy('dueDate');
   };
   
-  // Apply filters logic
   const applyAllFilters = () => {
-    // Logique d'application des filtres ici
   };
 
   return (

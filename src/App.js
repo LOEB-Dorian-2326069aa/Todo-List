@@ -252,7 +252,7 @@ useEffect(() => {
   .filter(task => {
    // Filtre de recherche
    if (searchQuery.length > 0 && searchQuery.length < 3) {
-     return false; // Ignore search queries with less than 3 characters
+     return false;
    }
    if (searchQuery && !task.title.toLowerCase().includes(searchQuery.toLowerCase())) {
      return false;
